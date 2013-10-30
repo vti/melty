@@ -1,0 +1,27 @@
+=pod
+
+melty is a melt/avconv helper that concatenates videos applying a watermark and
+fading.
+
+If a file is a text file (ends with C<.txt>) then it's converted to a centered
+image and is converted to 2 seconds video.
+
+Options:
+
+=over
+
+=item C<--watermark=s>
+
+    --watermark image-with-watermark.png
+
+Apply a watermark.
+
+=item C<--faded>
+
+    --faded
+
+Concatenate videos applying fading effect.
+
+=back
+
+=cut
