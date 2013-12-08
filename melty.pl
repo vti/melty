@@ -9,21 +9,29 @@ use Capture::Tiny qw(capture);
 
 my $faded     = 0;
 my $watermark = '';
+my $audio;
+my $remove_audio = 0;
 GetOptions(
-    "watermark=s" => \$watermark,
-    "faded"       => \$faded
+    "watermark=s"  => \$watermark,
+    "faded"        => \$faded,
+    "audio=s"      => \$audio,
+    "remove-audio" => \$remove_audio,
 ) or die("Error in command line arguments\n");
 
 my $output = pop @ARGV;
 my (@files) = @ARGV;
 die "Usage: <file1> <file2> ... <output>" unless @files && $output;
 
-my $tempdir = File::Temp->newdir;
+my $tempdir = File::Temp->newdir(CLEANUP => 0);
 
-my $cmd = 'melt ';
+my $cmd = 'melt -color:black -progress ';
+
+if ($remove_audio) {
+    $cmd .= ' -hide-audio ';
+}
 
 if ($faded) {
-    my $black_length = '10';
+    my $black_length = '13';
     my $mixer_length = '15';
 
     foreach my $file (@files) {
@@ -47,6 +55,11 @@ else {
 
 $cmd .= " -filter watermark:$watermark " if $watermark;
 
+if ($audio) {
+    $cmd .=
+qq{ -track -hide-video avformat:$audio -attach transition:mix };
+}
+
 $cmd .= " -consumer avformat:$output vcodec=libx264 preset=ultrafast";
 
 print $cmd, "\n";
@@ -66,13 +79,18 @@ sub preprocess {
 
     my $text = do { local $/; open my $fh, '<', $file or die $!; <$fh> };
 
+    $text =~ s{^\s+}{};
+    $text =~ s{\s+$}{};
+    $text =~ s{\r?\n}{\\n}g;
+
     my $image_file = generate_temp_name('.png');
 
     my $cmd =
         qq{convert -background black -fill white }
+      . qq{ -colorspace RGB -depth 32 }
       . qq{ -font 'Droid-Serif-Regular' -pointsize 80 }
       . qq{ -size 1920x1080 -gravity Center caption:'$text' }
-      . qq{ '$image_file'};
+      . qq{ 'PNG32:$image_file'};
     run($cmd);
 
     my $video_file = generate_temp_name('.mp4');
@@ -89,6 +107,8 @@ sub run {
 
     print "$cmd\n";
     system($cmd);
+
+    die "FAIL\n" if $?;
 }
 
 sub generate_temp_name {
