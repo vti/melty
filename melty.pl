@@ -5,7 +5,6 @@ use warnings;
 
 use Getopt::Long;
 use File::Temp ();
-use Capture::Tiny qw(capture);
 
 my $faded     = 0;
 my $watermark = '';
