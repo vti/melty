@@ -11,16 +11,24 @@ my $faded     = 0;
 my $watermark = '';
 my $audio;
 my $remove_audio = 0;
+my $output       = '';
+
+if (-e '.meltyrc') {
+    my $rc = do { local $/; open my $fh, '<', '.meltyrc' or die $!; <$fh> };
+    my @options = split /(?:,|\s+)/, $rc;
+    unshift @ARGV, @options;
+}
+
 GetOptions(
     "watermark=s"  => \$watermark,
     "faded"        => \$faded,
     "audio=s"      => \$audio,
     "remove-audio" => \$remove_audio,
+    "output"       => \$output,
 ) or die("Error in command line arguments\n");
 
-my $output = pop @ARGV;
 my (@files) = @ARGV;
-die "Usage: <file1> <file2> ... <output>" unless @files && $output;
+die "Usage: <file1> <file2> ... " unless @files;
 
 my $tempdir = File::Temp->newdir(CLEANUP => 0);
 
@@ -56,18 +64,22 @@ else {
 $cmd .= " -filter watermark:$watermark " if $watermark;
 
 if ($audio) {
-    $cmd .=
-qq{ -track -hide-video avformat:$audio -attach transition:mix };
+    $cmd .= qq{ -track -hide-video avformat:$audio -attach transition:mix };
 }
 
-$cmd .= " -consumer avformat:$output vcodec=libx264 preset=ultrafast";
+if ($output) {
+    $cmd .= " -consumer avformat:$output vcodec=libx264 preset=ultrafast";
 
-print $cmd, "\n";
+    print $cmd, "\n";
 
-if (-f $output) {
-    print "$output exists. Overwrite ? (y/n): ";
-    chomp(my $answer = <STDIN>);
-    exit(0) unless lc($answer) eq 'y';
+    if (-f $output) {
+        print "$output exists. Overwrite ? (y/n): ";
+        chomp(my $answer = <STDIN>);
+        exit(0) unless lc($answer) eq 'y';
+    }
+}
+else {
+    print $cmd, "\n";
 }
 
 system $cmd;
