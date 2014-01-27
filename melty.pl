@@ -31,8 +31,8 @@ if ($remove_audio) {
 }
 
 if ($faded) {
-    my $black_length = '13';
-    my $mixer_length = '15';
+    my $black_length = '15';
+    my $mixer_length = '60';
 
     foreach my $file (@files) {
         $file = preprocess($file);
@@ -95,7 +95,7 @@ sub preprocess {
 
     my $video_file = generate_temp_name('.mp4');
 
-    $cmd = qq{avconv -v quiet -loop 1 -t 00:00:02 -i $image_file }
+    $cmd = qq{avconv -v quiet -loop 1 -t 00:00:05 -i $image_file }
       . qq{ -r 30 -vcodec libx264 '$video_file'};
     run($cmd);
 
