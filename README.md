@@ -2,9 +2,25 @@
 
 melty - command-line video editor
 
+# SYNOPSIS
+
+    melty concat              [--watermark=image.png]
+                              [--faded]
+                              [--audio=file.mp3]
+                              [--remove-audio]
+                              [--output=file.mp4]
+                              <files>...
+    melty extract-audio       [--output=file.mp3] <files>...
+    melty crop                <start> <end> <file> [--output=file.mp4]
+    melty reorder-gopro-files [--force] <files>...
+    melty -h | --help
+    melty --version
+
+    -h | --help       Show this screen.
+
 # DESCRIPTION
 
-You probably want to read `melty` command-line documentation instead.
+`melty` is a command-line video editor. It is mainly a wrapper around `melt`.
 
 # AUTHOR
 
