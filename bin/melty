@@ -1,8 +1,30 @@
-=pod
+#!/usr/bin/env perl
 
-=head1 NAME
+use strict;
+use warnings;
 
-melty - command-line video editor
+use Docopt;
+use App::melty::concat;
+use App::melty::extract_audio;
+use App::melty::crop;
+use App::melty::reorder_gopro_files;
+
+my $opts = docopt();
+
+if ($opts->{concat}) {
+    App::melty::concat->new->run(%$opts);
+}
+elsif ($opts->{'extract-audio'}) {
+    App::melty::extract_audio->new->run(%$opts);
+}
+elsif ($opts->{'crop'}) {
+    App::melty::crop->new->run(%$opts);
+}
+elsif ($opts->{'reorder-gopro-files'}) {
+    App::melty::reorder_gopro_files->new->run(%$opts);
+}
+
+__END__
 
 =head1 SYNOPSIS
 
@@ -19,13 +41,3 @@ melty - command-line video editor
   melty --version
 
   -h | --help       Show this screen.
-
-=head1 DESCRIPTION
-
-C<melty> is a command-line video editor. It is mainly a wrapper around C<melt>.
-
-=head1 DEPENDENCIES
-
-C<melt>
-
-=cut
