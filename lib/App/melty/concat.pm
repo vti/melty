@@ -53,7 +53,7 @@ sub run {
 
     if (my $au = $options{'--audio'}) {
         die "Can't open file '$au': $!\n" unless -f $au;
-        $cmd .= qq{ -audio-track avformat:$au };
+        $cmd .= qq{ -track -hide-video avformat:$au -attach transition:mix };
     }
 
     check_output_and_execute($options{'--output'}, $cmd);
