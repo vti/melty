@@ -33,9 +33,15 @@ sub execute {
 
     $code->() if $code;
 
-    system($cmd);
+    if (!$ENV{APP_MELTY_DRY_RUN}) {
+        system($cmd);
 
-    die "FAIL\n" if $?;
+        die "FAIL\n" if $?;
+
+        return $?;
+    }
+
+    return 1;
 }
 
 1;
