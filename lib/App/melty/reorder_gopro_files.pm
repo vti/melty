@@ -5,6 +5,8 @@ use warnings;
 
 use base 'App::melty::command';
 
+use File::Copy ();
+
 sub run {
     my $self = shift;
     my (%options) = @_;
@@ -20,11 +22,11 @@ sub run {
       unless $force;
 
     foreach my $file (@$files) {
-        if ($file =~ m/^GOPR(\d+?)\.(.*)$/) {
-            $self->_move($file, "GP$1-00.$2", $force);
+        if ($file =~ m/GOPR(\d+?)\.(.*)$/) {
+            $self->_copy($file, "GP$1-00.$2", $force);
         }
         elsif ($file =~ m/GP(\d{2})(\d+)\.(.*)$/) {
-            $self->_move($file, "GP$2-$1.$3", $force);
+            $self->_copy($file, "GP$2-$1.$3", $force);
         }
         else {
             warn "Do not know what to do with '$file'\n";
@@ -34,12 +36,12 @@ sub run {
     return $self;
 }
 
-sub _move {
+sub _copy {
     my $self = shift;
     my ($old_file, $new_file, $force) = @_;
 
-    warn "Moving '$old_file' to '$new_file'\n";
-    rename $old_file, $new_file if $force;
+    warn "Copying '$old_file' to '$new_file'\n";
+    File::Copy::copy($old_file, $new_file) if $force;
 }
 
 1;
