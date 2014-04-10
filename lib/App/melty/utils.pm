@@ -12,7 +12,7 @@ sub check_output_and_execute {
 
     my $code;
     if ($output) {
-        $cmd .= " -consumer avformat:$output vcodec=libx264 preset=ultrafast";
+        $cmd .= " -consumer avformat:$output acodec=libmp3lame vcodec=libx264 preset=ultrafast";
 
         if (-f $output) {
             $code = sub {
