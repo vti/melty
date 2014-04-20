@@ -5,7 +5,7 @@ use warnings;
 
 use base 'App::melty::command';
 
-use App::melty::utils qw(check_output_and_execute);
+use App::melty::utils qw(execute_args check_file_exists);
 
 sub run {
     my $self = shift;
@@ -16,11 +16,16 @@ sub run {
         die "Can't open file '$file': $!\n" unless -f $file;
     }
 
-    my $cmd = 'melt -hide-video ';
+    my $output = $options{'--output'};
 
-    $cmd .= join ' ', @files;
+    my @args = qw/-hide-video/;
+    push @args, @files;
+    push @args, '-consumer', "avformat:$output", 'acodec=libmp3lame';
+    push @args, '-progress';
 
-    check_output_and_execute($options{'--output'}, $cmd);
+    check_file_exists($output);
+
+    execute_args('melt', @args);
 
     return $self;
 }
