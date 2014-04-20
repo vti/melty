@@ -5,7 +5,13 @@ use warnings;
 
 use base 'Exporter';
 
-our @EXPORT_OK = qw(check_output_and_execute execute check_file_exists execute_args);
+our @EXPORT_OK = qw(
+  check_output_and_execute
+  execute
+  execute_args
+  check_file_exists
+  normalize_time
+);
 
 use IPC::System::Simple qw(run);
 
@@ -66,6 +72,17 @@ sub execute_args {
     if (!$ENV{APP_MELTY_DRY_RUN}) {
         run($cmd, @args);
     }
+}
+
+sub normalize_time {
+    my ($time) = @_;
+
+    my ($sec, $min, $hour) = reverse split /:/, $time;
+    $sec  ||= 0;
+    $min  ||= 0;
+    $hour ||= 0;
+
+    return sprintf('%02d:%02d:%02d', $hour, $min, $sec);
 }
 
 1;
