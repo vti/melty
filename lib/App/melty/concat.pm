@@ -24,8 +24,8 @@ sub run {
     }
 
     if ($options{'--faded'}) {
-        my $black_length = '15';
-        my $mixer_length = '60';
+        my $black_length = '24';
+        my $mixer_length = '25';
 
         foreach my $file (@files) {
             $file = $self->_preprocess($file);
