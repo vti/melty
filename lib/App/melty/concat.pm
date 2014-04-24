@@ -93,8 +93,8 @@ sub _preprocess {
 
     my $video_file = $self->_generate_temp_name('.mp4');
 
-    $cmd = qq{avconv -v quiet -loop 1 -t 00:00:05 -i $image_file }
-      . qq{ -r 30 -vcodec libx264 '$video_file'};
+    $cmd = qq{melt $image_file out=150 -consumer avformat:$video_file vcodec=libx264};
+
     execute($cmd);
 
     return "$video_file";
